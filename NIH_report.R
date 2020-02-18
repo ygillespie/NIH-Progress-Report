@@ -106,3 +106,36 @@ dat<- redcap_read(
   fields     = desired_fields
 )$data
 head(dat)
+
+dat.f=dat %>%
+  select(-redcap_event_name,-redcap_repeat_instrument,-redcap_repeat_instance) %>%
+  mutate(mom3t_hispanic = recode(mom3t_hispanic, 
+                                 "0"="Unchecked","1"="No, I am not Hispanic or Latino","2"="Yes, I am Hispanic or Latino"),
+         mom3t_race_1    = recode(mom3t_race_1, 
+                                  "0"="Unchecked","1"="Checked"),
+         mom3t_race_2 = recode(mom3t_race_2,
+                               "0"="Unchecked","1"="Checked"),
+         mom3t_race_3    = recode(mom3t_race_3, 
+                                  "0"="Unchecked","1"="Checked"),
+         mom3t_race_4 = recode(mom3t_race_4, 
+                               "0"="Unchecked","1"="Checked"),
+         mom3t_race_5    = recode(mom3t_race_5, 
+                                  "0"="Unchecked","1"="Checked"),
+         mom3t_baby_sex    = recode(mom3t_baby_sex, 
+                                    "1"="Male","2"="Female"),
+         mom3t_baby_hispanic    = recode(mom3t_baby_hispanic, 
+                                         "0"="Unchecked","1"="No, I am not Hispanic or Latino","2"="Yes, I am Hispanic or Latino"),
+         mom3t_baby_race_1    = recode(mom3t_baby_race_1,
+                                       "0"="Unchecked","1"="Checked"),
+         mom3t_baby_race_2    = recode(mom3t_baby_race_2, 
+                                       "0"="Unchecked","1"="Checked"),
+         mom3t_baby_race_3    = recode(mom3t_baby_race_3, 
+                                       "0"="Unchecked","1"="Checked"),
+         mom3t_baby_race_4    = recode(mom3t_baby_race_4, 
+                                       "0"="Unchecked","1"="Checked"),
+         mom3t_baby_race_5    = recode(mom3t_baby_race_5, 
+                                       "0"="Unchecked","1"="Checked"))%>%
+
+  
+  distinct()
+```
