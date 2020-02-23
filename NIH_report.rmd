@@ -10,7 +10,7 @@ toc: yes
 toc_float: yes
 ---
   
-  ```{r setup, include=FALSE, warning = FALSE}
+```{r setup, include=FALSE, warning = FALSE}
 library(knitr, warn.conflicts = F, quietly = T)
 library(tidyr, warn.conflicts = F, quietly = T)
 library(dplyr, warn.conflicts = F, quietly = T)
@@ -31,18 +31,10 @@ beach_token<-decrypt_dpapi_pw(credential_path)
 rcon <- redcapConnection(url=uri, token=beach_token)
 # variables
 desired_fields=c("test_id","mom3t_hispanic",
-                 "mom3t_race_1",
-                 "mom3t_race_2",
-                 "mom3t_race_3",
-                 "mom3t_race_4",
-                 "mom3t_race_5",
+                 "mom3t_race",
                  "mom3t_baby_sex",
-                 "mom3t_baby_hispanic".
-                 "mom3t_baby_race_1",
-                 "mom3t_baby_race_2".
-                 "mom3t_baby_race_3",
-                 "mom3t_baby_race_4",
-                 "mom3t_baby_race_5")
+                 "mom3t_baby_hispanic",
+                 "mom3t_baby_race")
 # participants
 participants.records.v1=c("BLS001A",
                      "BLS033A",
@@ -53,7 +45,7 @@ participants.records.v1=c("BLS001A",
                      "BLS003A",
                      "BLS008A",
                      "BLS011A",
-                     "BLS012A".
+                     "BLS012A",
                      "BLS014A",
                      "BLS025A",
                      "BLS026A",
@@ -109,32 +101,32 @@ head(dat)
 
 dat.f=dat %>%
   select(-redcap_event_name,-redcap_repeat_instrument,-redcap_repeat_instance) %>%
-  mutate(mom3t_hispanic = recode(mom3t_hispanic, 
+  mutate(hispanic = recode(mom3t_hispanic, 
                                  "0"="Unchecked","1"="No, I am not Hispanic or Latino","2"="Yes, I am Hispanic or Latino"),
-         mom3t_race_1    = recode(mom3t_race_1, 
+         American_Indian_or_Native_Alaskan_Mom    = recode(mom3t_race___1, 
                                   "0"="Unchecked","1"="Checked"),
-         mom3t_race_2 = recode(mom3t_race_2,
+         Asian_Mom  = recode(mom3t_race___2,
                                "0"="Unchecked","1"="Checked"),
-         mom3t_race_3    = recode(mom3t_race_3, 
+         Black_or_African_American_Mom    = recode(mom3t_race___3, 
                                   "0"="Unchecked","1"="Checked"),
-         mom3t_race_4 = recode(mom3t_race_4, 
+         Pacific_Islander_Mom = recode(mom3t_race___4, 
                                "0"="Unchecked","1"="Checked"),
-         mom3t_race_5    = recode(mom3t_race_5, 
+         White_Mom    = recode(mom3t_race___5, 
                                   "0"="Unchecked","1"="Checked"),
          mom3t_baby_sex    = recode(mom3t_baby_sex, 
                                     "1"="Male","2"="Female"),
          mom3t_baby_hispanic    = recode(mom3t_baby_hispanic, 
                                          "0"="Unchecked","1"="No, I am not Hispanic or Latino","2"="Yes, I am Hispanic or Latino"),
-         mom3t_baby_race_1    = recode(mom3t_baby_race_1,
+         American_Indian_or_Native_Alaskan_Baby    = recode(mom3t_baby_race___1,
                                        "0"="Unchecked","1"="Checked"),
-         mom3t_baby_race_2    = recode(mom3t_baby_race_2, 
+         Asian_Baby    = recode(mom3t_baby_race___2, 
                                        "0"="Unchecked","1"="Checked"),
-         mom3t_baby_race_3    = recode(mom3t_baby_race_3, 
+         Black_or_African_American_Baby    = recode(mom3t_baby_race___3, 
                                        "0"="Unchecked","1"="Checked"),
-         mom3t_baby_race_4    = recode(mom3t_baby_race_4, 
+         Pacific_Islander_Baby    = recode(mom3t_baby_race___4, 
                                        "0"="Unchecked","1"="Checked"),
-         mom3t_baby_race_5    = recode(mom3t_baby_race_5, 
-                                       "0"="Unchecked","1"="Checked"))%>%
+         White_Baby    = recode(mom3t_baby_race___5, 
+"0"="Unchecked","1"="Checked"))%>%
 
   
   distinct()
