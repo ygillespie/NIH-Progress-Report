@@ -112,7 +112,15 @@ dat.f=dat %>%
          Pacific_Islander_Mom = recode(mom3t_race___4, 
                                "0"="Unchecked","1"="Checked"),
          White_Mom    = recode(mom3t_race___5, 
-                                  "0"="Unchecked","1"="Checked"),
+               
+                               
+                               
+                               
+                               
+                               
+                               
+                               
+                                                  "0"="Unchecked","1"="Checked"),
          mom3t_baby_sex    = recode(mom3t_baby_sex, 
                                     "1"="Male","2"="Female"),
          mom3t_baby_hispanic    = recode(mom3t_baby_hispanic, 
@@ -131,3 +139,29 @@ dat.f=dat %>%
   
   distinct()
 ```
+
+
+
+```{r , warning=FALSE, include=FALSE}
+
+ hispanic <- dat.f %>%
+  filter(hispanic == "Yes, I am Hispanic or Latino")
+
+Not_hispanic <- dat.f %>%
+  filter(mom3t_hispanic == 1)
+
+hispanic <- hispanic%>%
+  select(White_Mom,Black_or_African_American_Mom,Pacific_Islander_Mom,Asian_Mom,American_Indian_or_Native_Alaskan_Mom)%>%
+  group_by(White_Mom,Black_or_African_American_Mom,Pacific_Islander_Mom,Asian_Mom,American_Indian_or_Native_Alaskan_Mom)%>%
+  summarise(count=n())
+
+
+
+```
+
+|         Hispanic             |        not hispanic        |
+|:----------------------------:|:--------------------------:|
+|    male |        Female      |   male    |    Female      |
+|:--------|:--------:|:-------:|:--------:|:-------:|------:|
+|white    |     23   |   15    |  0.52    |   0.29  |  0.59 |
+|Flyer    |     35   |   22    |  0.63    |   0.29  |  0.59 |
