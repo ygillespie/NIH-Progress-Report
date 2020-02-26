@@ -165,3 +165,19 @@ hispanic <- hispanic%>%
 |:--------|:--------:|:-------:|:--------:|:-------:|------:|
 |white    |     23   |   15    |  0.52    |   0.29  |  0.59 |
 |Flyer    |     35   |   22    |  0.63    |   0.29  |  0.59 |
+```  
+
+```{r , warning=FALSE, include=FALSE}
+mom3t_baby_hispanic <- dat.f %>%
+  filter(hispanic == "Yes, I am Hispanic or Latino")
+
+Not_hispanic_baby <- dat.f %>%
+  filter(mom3t_baby_hispanic == 1)
+
+mom3t_baby_hispanic <- mom3t_baby_hispanic%>%
+  
+  select(American_Indian_or_Native_Alaskan_Baby,Asian_Baby,Black_or_African_American_Baby,Pacific_Islander_Baby,White_Baby)%>%
+ 
+   group_by(American_Indian_or_Native_Alaskan_Baby,Asian_Baby,Black_or_African_American_Baby,Pacific_Islander_Baby,White_Baby)%>%
+  summarise(count=n())
+```
