@@ -31,18 +31,10 @@ beach_token<-decrypt_dpapi_pw(credential_path)
 rcon <- redcapConnection(url=uri, token=beach_token)
 # variables
 desired_fields=c("test_id","mom3t_hispanic",
-                 "mom3t_race_1",
-                 "mom3t_race_2",
-                 "mom3t_race_3",
-                 "mom3t_race_4",
-                 "mom3t_race_5",
+                 "mom3t_race",
                  "mom3t_baby_sex",
                  "mom3t_baby_hispanic",
-                 "mom3t_baby_race_1",
-                 "mom3t_baby_race_2",
-                 "mom3t_baby_race_3",
-                 "mom3t_baby_race_4",
-                 "mom3t_baby_race_5")
+                 "mom3t_baby_race")
 # participants
 participants.records.v1=c("BLS001A",
                      "BLS033A",
@@ -106,15 +98,12 @@ dat<- redcap_read(
   fields     = desired_fields
 )$data
 head(dat)
-```
-
-```{r variable selection, include=FALSE}
 
 dat.f=dat %>%
   select(-redcap_event_name,-redcap_repeat_instrument,-redcap_repeat_instance) %>%
   mutate(hispanic = recode(mom3t_hispanic, 
                                  "0"="Unchecked","1"="No, I am not Hispanic or Latino","2"="Yes, I am Hispanic or Latino"),
-         American_Indian_or_Native_Alaskan_Mom = recode(mom3t_race___1, 
+         American_Indian_or_Native_Alaskan_Mom    = recode(mom3t_race___1, 
                                   "0"="Unchecked","1"="Checked"),
          Asian_Mom  = recode(mom3t_race___2,
                                "0"="Unchecked","1"="Checked"),
@@ -123,7 +112,7 @@ dat.f=dat %>%
          Pacific_Islander_Mom = recode(mom3t_race___4, 
                                "0"="Unchecked","1"="Checked"),
          White_Mom    = recode(mom3t_race___5, 
-                                "0"="Unchecked","1"="Checked"),
+                               "0"="Unchecked","1"="Checked"),
          mom3t_baby_sex    = recode(mom3t_baby_sex, 
                                     "1"="Male","2"="Female"),
          mom3t_baby_hispanic    = recode(mom3t_baby_hispanic, 
@@ -138,141 +127,131 @@ dat.f=dat %>%
                                        "0"="Unchecked","1"="Checked"),
          White_Baby    = recode(mom3t_baby_race___5, 
 "0"="Unchecked","1"="Checked"))%>%
+
   
   distinct()
 ```
 
+# mom demographic breakdown between hispanic and nonhispanic. The tables below represents the number of unique combinations of race.
 
+## This table is the Hispanic population.
 
-```{r , warning=FALSE, include=FALSE}
+```{r , warning=FALSE, echo=FALSE}
  hispanic <- dat.f %>%
   filter(hispanic == "Yes, I am Hispanic or Latino")
 
+hispanic <- hispanic%>%
+  select(White_Mom,Black_or_African_American_Mom,
+         Pacific_Islander_Mom,Asian_Mom,
+         American_Indian_or_Native_Alaskan_Mom)%>%
+  group_by(White_Mom,Black_or_African_American_Mom,
+           Pacific_Islander_Mom,Asian_Mom,
+           American_Indian_or_Native_Alaskan_Mom)%>%
+  summarise(count=n())
+
+hispanic
+```
+
+
+## Non Hispanic
+```{r, warning=FALSE, echo=FALSE}
 Not_hispanic <- dat.f %>%
   filter(mom3t_hispanic == 1)
-hispanic <- hispanic%>%
-  select(White_Mom,Black_or_African_American_Mom,Pacific_Islander_Mom,Asian_Mom,American_Indian_or_Native_Alaskan_Mom)%>%
-  group_by(White_Mom,Black_or_African_American_Mom,Pacific_Islander_Mom,Asian_Mom,American_Indian_or_Native_Alaskan_Mom)%>%
+
+Not_hispanic <- Not_hispanic%>%
+  select(White_Mom,Black_or_African_American_Mom,
+         Pacific_Islander_Mom,Asian_Mom,
+         American_Indian_or_Native_Alaskan_Mom)%>%
+  group_by(White_Mom,Black_or_African_American_Mom,
+           Pacific_Islander_Mom,Asian_Mom,
+           American_Indian_or_Native_Alaskan_Mom)%>%
   summarise(count=n())
+
+Not_hispanic
 ```
 
-|         Hispanic             |        not hispanic        |
-|:----------------------------:|:--------------------------:|
-|    male |        Female      |   male    |    Female      |
-|:--------|:--------:|:-------:|:--------:|:-------:|------:|
-|white    |     23   |   15    |  0.52    |   0.29  |  0.59 |
-|Flyer    |     35   |   22    |  0.63    |   0.29  |  0.59 |
-``
-`  
-```{r , warning=FALSE, include=FALSE}
-BabyHispanic <- dat.f %>%
-  filter(hispanic == "Yes, I am Hispanic or Latino")
-  
+
+# These next tables represents the baby demographic. 
+
+## These first two is the is the male babies.
+
+### Hispanic:
+```{r , warning=FALSE, echo=FALSE}
+hispanic_baby <- dat.f %>%
+  filter(mom3t_baby_sex=="Male")%>%
+  filter(mom3t_baby_hispanic == "Yes, I am Hispanic or Latino")
+
+
+
+hispanic_baby <- hispanic_baby%>%
+  select(American_Indian_or_Native_Alaskan_Baby,Asian_Baby,
+         Black_or_African_American_Baby,Pacific_Islander_Baby,
+         White_Baby)%>%
+  group_by(American_Indian_or_Native_Alaskan_Baby,Asian_Baby,
+           Black_or_African_American_Baby,Pacific_Islander_Baby,
+           White_Baby)%>%
+  summarise(count=n())
+
+hispanic_baby
+```
+
+
+### Non Hispanic:
+```{r, warning=FALSE, echo=FALSE}
 Not_hispanic_baby <- dat.f %>%
-  filter(mom3t_baby_hispanic == 1)
-mom3t_baby_hispanic <- mom3t_baby_hispanic%>%
-  
-  select(American_Indian_or_Native_Alaskan_Baby,Asian_Baby,Black_or_African_American_Baby,Pacific_Islander_Baby,White_Baby)%>%
- 
-   group_by(American_Indian_or_Native_Alaskan_Baby,Asian_Baby,Black_or_African_American_Baby,Pacific_Islander_Baby,White_Baby)%>%
+  filter(mom3t_baby_sex=="Male")%>%  
+  filter(mom3t_baby_hispanic == "No, I am not Hispanic or Latino")
+
+Not_hispanic_baby <- Not_hispanic_baby%>%
+  select(American_Indian_or_Native_Alaskan_Baby,Asian_Baby,
+         Black_or_African_American_Baby,Pacific_Islander_Baby,
+         White_Baby)%>%
+  group_by(American_Indian_or_Native_Alaskan_Baby,Asian_Baby,
+           Black_or_African_American_Baby,Pacific_Islander_Baby,
+           White_Baby)%>%
   summarise(count=n())
-```
 
-#new code for tables
-#Mother hispanic
-```{r , warning=FALSE, include=FALSE}
-Hispanic <- dat.f%>%
-  select(test_id,mom3t_hispanic)%>%
-  group_by(test_id,mom3t_hispanic)%>%
-  filter(mom3t_hispanic == "Yes, I am Hispanic or Latino" )%>%
- filter(!is.na(mom3t_hispanic))%>%
-  distinct(test_id)%>%
-  group_by(mom3t_hispanic)%>%
-  summarise(count=n())
-```
-
-#Mother not hipanic
-```{r , warning=FALSE, include=FALSE}
-NotHispanic <- dat.f%>%
-
-hispanic <- hispanic%>%
-  select(White_Mom_Baby,Black_or_African_American_Mom_Baby,Pacific_Islander_Mom,Asian_Mom,American_Indian_or_Native_Alaskan_Mom)%>%
-  group_by(White_Mom,Black_or_African_American_Mom,Pacific_Islander_Mom,Asian_Mom,American_Indian_or_Native_Alaskan_Mom)%>%
-  
-  select(test_id,mom3t_hispanic)%>%
-  group_by(test_id,mom3t_hispanic)%>%
-  filter(mom3t_hispanic == "No, I am not Hispanic or Latino" )%>%
- filter(!is.na(mom3t_hispanic))%>%
-  distinct(test_id)%>%
-  group_by(mom3t_hispanic)%>%
-  summarise(count=n())
-```
-
-#Baby hispanic
-```{r , warning=FALSE, include=FALSE}
-BabyHispanicM <- dat.f%>%
-  select(test_id,mom3t_baby_hispanic)%>%
-  group_by(test_id,mom3t_baby_hispanic)%>%
-  filter(mom3t_baby_hispanic == "Yes, I am Hispanic or Latino" )%>%
-  filter(  mom3t_baby_sex == "male" )
- filter(!is.na(mom3t_baby_hispanic))%>%
-  distinct(test_id)%>%
-  group_by(mom3t_baby_hispanic)%>%
-  summarise(count=n())
-```
-
-```{r , warning=FALSE, include=FALSE}
-BabyHispanicF <- dat.f%>%
-  select(test_id,mom3t_baby_hispanic)%>%
-  group_by(test_id,mom3t_baby_hispanic)%>%
-  filter(mom3t_baby_hispanic == "Yes, I am Hispanic or Latino" )%>%
-  filter(  mom3t_baby_sex == "Female" )
- filter(!is.na(mom3t_baby_hispanic))%>%
-  distinct(test_id)%>%
-  group_by(mom3t_baby_hispanic)%>%
-  summarise(count=n())
-```
-
-#baby not hispanic
-```{r , warning=FALSE, include=FALSE}
-BabyNotHispanicM <- dat.f%>%
-
-#your code
-hispanic <- hispanic%>%
-  select(White_Baby,Black_or_African_American_Baby,Pacific_Islander_Baby,Asian_Baby,American_Indian_or_Native_Alaskan_Baby)%>%
-  
-  group_by(White_Baby,Black_or_African_American_Baby,Pacific_Islander_Baby,Asian_Baby,American_Indian_or_Native_Alaskan_Baby)%>%
- 
- #my code 
-  select(test_id,mom3t_baby_hispanic)%>%
-  group_by(test_id,mom3t_baby_hispanic)%>%
-  filter(mom3t_baby_hispanic == "No, I am not Hispanic or Latino" )%>%
-  filter(  mom3t_baby_sex == "male" )
- filter(!is.na(mom3t_baby_hispanic))%>%
-  distinct(test_id)%>%
-  group_by(mom3t_baby_hispanic)%>%
-  summarise(count=n())
-```
-
-```{r , warning=FALSE, include=FALSE}
-BabyNotHispanicF <- dat.f%>%
-
-#your code
-hispanic <- hispanic%>%
-  select(White_Baby,Black_or_African_American_Baby,Pacific_Islander_Baby,Asian_Baby,American_Indian_or_Native_Alaskan_Baby)%>%
-  
-  group_by(White_Baby,Black_or_African_American_Baby,Pacific_Islander_Baby,Asian_Baby,American_Indian_or_Native_Alaskan_Baby)%>%
-  
-  #my code
-  select(test_id,mom3t_baby_hispanic)%>%
-  group_by(test_id,mom3t_baby_hispanic)%>%
-  filter(mom3t_baby_hispanic == "No, I am not Hispanic or Latino" )%>%
-  filter(  mom3t_baby_sex == "Female" )
- filter(!is.na(mom3t_baby_hispanic))%>%
-  distinct(test_id)%>%
-  group_by(mom3t_baby_hispanic)%>%
-  summarise(count=n())
+Not_hispanic_baby
 ```
 
 
+## These first two is the is the female babies.
 
+### Hispanic:
+```{r , warning=FALSE, echo=FALSE}
+hispanic_baby <- dat.f %>%
+  filter(mom3t_baby_sex=="Female")%>%
+  filter(mom3t_baby_hispanic == "Yes, I am Hispanic or Latino")
+
+
+
+hispanic_baby <- hispanic_baby%>%
+  select(American_Indian_or_Native_Alaskan_Baby,Asian_Baby,
+         Black_or_African_American_Baby,Pacific_Islander_Baby,
+         White_Baby)%>%
+  group_by(American_Indian_or_Native_Alaskan_Baby,Asian_Baby,
+           Black_or_African_American_Baby,Pacific_Islander_Baby,
+           White_Baby)%>%
+  summarise(count=n())
+
+hispanic_baby
+```
+
+
+### Non Hispanic:
+```{r, warning=FALSE, echo=FALSE}
+Not_hispanic_baby <- dat.f %>%
+  filter(mom3t_baby_sex=="Female")%>%  
+  filter(mom3t_baby_hispanic == "No, I am not Hispanic or Latino")
+
+Not_hispanic_baby <- Not_hispanic_baby%>%
+  select(American_Indian_or_Native_Alaskan_Baby,Asian_Baby,
+         Black_or_African_American_Baby,Pacific_Islander_Baby,
+         White_Baby)%>%
+  group_by(American_Indian_or_Native_Alaskan_Baby,Asian_Baby,
+           Black_or_African_American_Baby,Pacific_Islander_Baby,
+           White_Baby)%>%
+  summarise(count=n())
+
+Not_hispanic_baby
+```
