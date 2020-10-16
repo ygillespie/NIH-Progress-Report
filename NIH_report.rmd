@@ -37,58 +37,16 @@ desired_fields=c("test_id","mom3t_hispanic",
                  "mom3t_baby_hispanic",
                  "mom3t_baby_race")
 # participants
-participants.records.v1=c("BLS001A",
-                     "BLS033A",
-                     "BLS044A",
-                     "BLS054A",
-                     "BLS058A",
-                     "BLS002A",
-                     "BLS003A",
-                     "BLS008A",
-                     "BLS011A",
-                     "BLS012A",
-                     "BLS014A",
+participants.records.v1=c("BLS016A",
+                     "BLS019A",
+                     "BLS020A",
+                     "BLS023A",
                      "BLS025A",
-                     "BLS026A",
                      "BLS027A",
-                     "BLS028A",
-                     "BLS029A",
+                     "BLS026A",
                      "BLS030A",
                      "BLS032A",
-                     "BLS034A",
-                     "BLS035A",
-                     "BLS036A",
-                     "BLS037A",
-                     "BLS038A",
-                     "BLS039A",
-                     "BLS040A",
-                     "BLS041A",
-                     "BLS043A",
-                     "BLS045A",
-                     "BLS048A",
-                     "BLS049A",
-                     "BLS050A",
-                     "BLS051A",
-                     "BLS052A",
-                     "BLS053A",
-                     "BLS055A",
-                     "BLS056A",
-                     "BLS059A",
-                     "BLS060A",
-                     "BLS062A",
-                     "BLS064A",
-                     "BLS065A",
-                     "BLS066A",
-                     "BLS070A",
-                     "BLS073A",
-                     "BLS074A",
-                     "BLS075A",
-                     "BLS078A",
-                     "BLS079A",
-                     "BLS081A",
-                     "BLS083A",
-                     "BLS084A",
-                     "BLS086A")
+                     "BLS033A")
 # pull data
 ds <- data.frame(desired_fields)
 dat<- redcap_read(
@@ -105,7 +63,9 @@ head(dat)
 dat.f=dat %>%
   select(-redcap_event_name,-redcap_repeat_instrument,-redcap_repeat_instance) %>%
   mutate(hispanic = recode(mom3t_hispanic, 
-                                 "0"="Unchecked","1"="No, I am not Hispanic or Latino","2"="Yes, I am Hispanic or Latino"),
+                   "NA"="Unchecked",
+                   "1"="No, I am not Hispanic or Latino",
+                   "2"="Yes, I am Hispanic or Latino"),
          American_Indian_or_Native_Alaskan_Mom    = recode(mom3t_race___1, 
                                   "0"="Unchecked","1"="Checked"),
          Asian_Mom  = recode(mom3t_race___2,
@@ -135,7 +95,7 @@ dat.f=dat %>%
   distinct()
 ```
 
-```{r, echo=FALSE, include=FALSE, warning = FALSE}
+```{r Hispanic, echo=FALSE, include=FALSE, warning = FALSE}
  hispanic <- dat.f %>%
   filter(hispanic == "Yes, I am Hispanic or Latino")
 
@@ -151,7 +111,7 @@ hispanic <- hispanic%>%
 hispanic
 ```
 
-```{r, echo=FALSE, include=FALSE, warning = FALSE}
+```{r Female Baby Hispanic, echo=FALSE, include=FALSE, warning = FALSE}
 hispanic_baby <- dat.f %>%
   filter(mom3t_baby_sex=="Female")%>%
   filter(mom3t_baby_hispanic == "Yes, I am Hispanic or Latino")
@@ -172,7 +132,7 @@ hispanic_baby
 
 ```
 
-```{r, echo=FALSE, include=FALSE, warning = FALSE}
+```{r Male Baby Hispanic, echo=FALSE, include=FALSE, warning = FALSE}
 hispanic_baby_m <- dat.f %>%
   filter(mom3t_baby_sex=="Male")%>%
   filter(mom3t_baby_hispanic == "Yes, I am Hispanic or Latino")
@@ -217,7 +177,7 @@ for (rows in hispanic_baby_m) {
 }
 ```
 
-```{r, Hispanic Female,echo=FALSE, include=FALSE, warning = FALSE}
+```{r, Hispanic Female and Hispanic Joining,echo=FALSE, include=FALSE, warning = FALSE}
 hispanic_F <- bind_rows(hispanic,hispanic_baby)
 
 temp <- nrow(hispanic_F)
@@ -254,7 +214,7 @@ Hispanic <- full_join(x,xm)
 ```
 
 
-```{r, warning=FALSE, echo=FALSE, include=FALSE, }
+```{r Not Hispanic, warning=FALSE, echo=FALSE, include=FALSE, }
 Not_hispanic <- dat.f %>%
   filter(mom3t_hispanic == 1)
 
@@ -272,7 +232,7 @@ Not_hispanic <- Not_hispanic%>%
 Not_hispanic
 ```
 
-```{r, warning=FALSE, echo=FALSE, include=FALSE, }
+```{r Not Hispanic Baby F, warning=FALSE, echo=FALSE, include=FALSE, }
 Not_hispanic_baby <- dat.f %>%
   filter(mom3t_baby_sex=="Female")%>%  
   filter(mom3t_baby_hispanic == "No, I am not Hispanic or Latino")
@@ -291,7 +251,7 @@ Not_hispanic_baby <- Not_hispanic_baby%>%
 Not_hispanic_baby
 ```
 
-```{r, warning=FALSE, echo=FALSE, include=FALSE, }
+```{r Not Hispanic Baby M, warning=FALSE, echo=FALSE, include=FALSE, }
 Not_hispanic_baby_m <- dat.f %>%
   filter(mom3t_baby_sex=="Male")%>%  
   filter(mom3t_baby_hispanic == "No, I am not Hispanic or Latino")
@@ -325,7 +285,8 @@ for (rows in Not_hispanic_baby_m) {
       temp <- temp+1
       temp_2 <- index
       if(temp>1){
-        nm[6, 2]<- nm[6, 2]+1
+        nm[temp_2, 2]<- nm[temp_2, 2]+1
+   
         break
       }
     }
